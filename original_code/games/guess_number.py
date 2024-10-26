@@ -2,7 +2,7 @@ import random
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Bot, Event
 from nonebot.typing import T_State
-from ..connsql import save_game_attempt, update_user_stats, fetch_game_history, fetch_leaderboard, search_name, get_user_rank
+from ...refactored.connsql import save_game_attempt, update_user_stats, fetch_game_history, fetch_leaderboard, search_name, get_user_rank
 from ..status import extend_user_session, get_user_id_from_qq
 
 # 猜数字

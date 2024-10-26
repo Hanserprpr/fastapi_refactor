@@ -3,7 +3,7 @@ from nonebot.plugin import PluginMetadata
 from nonebot.adapters import Bot, Event
 from nonebot.typing import T_State
 from .config import Config
-from .connsql import search_name, get_me, signup, update_last_login, update_user_info, search_passwd, search_id, get_id
+from ..refactored.connsql import search_name, get_me, signup, update_last_login, update_user_info, search_passwd, search_id, get_id
 from .passwd import decrypt, encrypt
 from .status import set_user_logged_in, is_user_logged_in, init_redis, set_user_logged_out
 from nonebot.adapters.onebot.v11 import MessageEvent

@@ -1,5 +1,5 @@
 import bcrypt
-from .connsql import search_passwd
+from ..refactored.connsql import search_passwd
 
 def encrypt(passwd: str) -> str:
     password = passwd.encode('utf-8')

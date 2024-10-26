@@ -1,5 +1,5 @@
 import redis.asyncio as aioredis
-from .connsql import get_id
+from ..refactored.connsql import get_id
 # 创建 Redis 连接池
 redis = None
 
