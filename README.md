@@ -15,6 +15,10 @@
 - `bcrypt` - 密码哈希库，用于加密用户密码。
 - `pydantic` - 数据验证库，适用于请求数据验证。
 
+## 数据库配置
+
+- 数据库配置及结构请见 [mysql.md](https://github.com/Hanserprpr/guessnum_fastapi_refactor/blob/main/mysql.md)
+
 ## 安装步骤
 
 在项目根目录中创建虚拟环境并安装依赖项：
