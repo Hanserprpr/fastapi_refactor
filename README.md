@@ -17,7 +17,7 @@
 
 ## 数据库配置
 
-- 数据库配置及结构请见 [mysql.md](https://github.com/Hanserprpr/guessnum_fastapi_refactor/blob/main/mysql.md)
+数据库配置及结构请见 [mysql.md](https://github.com/Hanserprpr/guessnum_fastapi_refactor/blob/main/mysql.md)
 
 ## 安装步骤
 
