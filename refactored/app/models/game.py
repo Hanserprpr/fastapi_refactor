@@ -18,7 +18,7 @@ class GameAttempt(Base):
     user = relationship("User", back_populates="game_attempts")
 
 # 游戏统计表模型
-class GameStat(Base):
+class GameStats(Base):
     __tablename__ = 'game_stats'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
