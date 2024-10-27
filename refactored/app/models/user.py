@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Enum, DateTime, func
 from sqlalchemy.orm import relationship
-from database import Base
+from app.database import Base
 
 # 用户表模型
 class User(Base):
@@ -19,4 +19,4 @@ class User(Base):
 
     # 关系
     game_attempts = relationship("GameAttempt", back_populates="user")
-    game_stats = relationship("GameStat", back_populates="user")
+    game_stats = relationship("GameStats", back_populates="user")

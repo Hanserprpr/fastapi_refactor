@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Enum, DateTime, ForeignKey, Float, func
 from sqlalchemy.orm import relationship
-from database import Base
+from app.database import Base
 
 # 游戏尝试表模型
 class GameAttempt(Base):

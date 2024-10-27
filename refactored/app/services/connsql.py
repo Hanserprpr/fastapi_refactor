@@ -131,3 +131,8 @@ class Connsql:
         subquery = self.db.query(GameStats.user_id, GameStats.average_score, func.rank().over(order_by=GameStats.average_score.desc()).label("ranking")).filter(GameStats.game_name == game_name).subquery()
         rank_info = self.db.query(subquery).filter(subquery.c.user_id == user_id).first()
         return rank_info
+
+    def get_user_by_identifier(self, identifier: str) -> User:
+        """通过用户名或邮箱获取完整用户对象"""
+        query_field = User.email if re.match(r"[^@]+@[^@]+\.[^@]+", identifier) else User.name
+        return self.db.query(User).filter(query_field == identifier).first()

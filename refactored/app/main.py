@@ -2,7 +2,7 @@
 
 from fastapi import FastAPI
 from app.database import engine, Base  # 初始化数据库连接
-from app.routers import user  # 导入路由模块
+from app.routers import user, auth  # 导入用户和认证路由模块
 from app.config import settings  # 导入配置
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -26,11 +26,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 注册路由
+# 注册用户路由
 app.include_router(user.router, prefix="/api/users", tags=["Users"])
+
+# 注册认证路由
+app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
 
 # 根路由
 @app.get("/")
 def root():
     return {"message": "Welcome to the Guess Number Game API"}
-

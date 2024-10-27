@@ -1,4 +1,4 @@
 from .user import User
-from .game import GameAttempt, GameStat
+from .game import GameAttempt, GameStats
 
-__all__ = ["User", "GameAttempt", "GameStat"]
+__all__ = ["User", "GameAttempt", "GameStats"]
