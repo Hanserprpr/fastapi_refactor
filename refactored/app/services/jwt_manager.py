@@ -1,5 +1,3 @@
-# app/services/jwt_manager.py
-
 import jwt
 from datetime import datetime, timedelta
 from app.config import settings

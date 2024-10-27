@@ -47,3 +47,8 @@ async def register(
 @router.post("/login", response_model=dict)
 async def login(request: LoginRequest, db: Session = Depends(get_db)):
     return await login_user(db, request.identifier, request.password)
+
+@router.post("/edit", response_model=dict)
+async def edit(
+    
+)

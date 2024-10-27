@@ -36,3 +36,8 @@ app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
 @app.get("/")
 def root():
     return {"message": "Welcome to the Guess Number Game API"}
+# Import and include user_router for user profile management
+from app.routers.user_router import router as user_router
+
+# Register the user router
+app.include_router(user_router, prefix="/api/user", tags=["User"])
