@@ -1,3 +1,4 @@
 git_key
 git_key.pub
 refactored/.env
+refactored/app/__pycache__
