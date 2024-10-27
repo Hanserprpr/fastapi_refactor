@@ -5,7 +5,7 @@ from nonebot.typing import T_State
 from nonebot.message import event_preprocessor
 from .config import Config
 from ..refactored.connsql import search_name, get_me, signup, update_last_login, update_user_info, search_passwd, get_id
-from ..refactored.passwd import decrypt, encrypt
+from ..refactored.app.services.passwd import decrypt, encrypt
 from ..refactored.status import set_user_logged_in, is_user_logged_in, init_redis, set_user_logged_out
 from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot_plugin_apscheduler import scheduler
