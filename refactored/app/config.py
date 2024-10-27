@@ -17,5 +17,5 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"  # 指定 .env 文件
         extra = "ignore"
-# 创建配置实例
+
 settings = Settings()

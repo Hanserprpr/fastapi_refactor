@@ -1,5 +1,3 @@
-# app/main.py
-
 from fastapi import FastAPI
 from app.database import engine, Base  # 初始化数据库连接
 from app.routers import user, auth  # 导入用户和认证路由模块
@@ -10,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI(
     title="Guess Number Game API",
     description="API for the Guess Number Game application with FastAPI",
-    version="1.0.0",
+    version="1.0.3",
     debug=settings.debug
 )
 
