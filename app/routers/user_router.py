@@ -13,7 +13,7 @@ class UserProfile(BaseModel):
     sex: str = None
     password: str = None
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 @router.get("/profile")
 async def get_profile(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):

@@ -18,10 +18,10 @@ async def register_user(db: Session, name: str, email: str, sex: str, password: 
     
     return {"id": user_id, "name": name, "email": email, "sex": sex, "QQ": qq}
 
-async def login_user(db: Session, identifier: str, password: str) -> str:
+async def login_user(db: Session, username: str, password: str) -> str:
     connsql = Connsql(db)
-    user = connsql.get_user_by_identifier(identifier)
-    if not user or not await passwd.decrypt(password, identifier, db):
+    user = connsql.get_user_by_identifier(username)
+    if not user or not await passwd.decrypt(password, username, db):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
     
     connsql.update_last_login(user_id=user.id)

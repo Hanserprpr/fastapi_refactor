@@ -1,7 +1,7 @@
 git_key
 git_key.pub
-refactored/.env
-refactored/app/__pycache__
-refactored/app/routers/__pycache__
-refactored/app/models/__pycache__
-refactored/app/services/__pycache__
+.env
+app/__pycache__
+app/routers/__pycache__
+app/models/__pycache__
+app/services/__pycache__

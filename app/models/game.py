@@ -50,5 +50,5 @@ class LeaderboardEntry(BaseModel):
 
 class LeaderboardResponse(BaseModel):
     leaderboard: List[LeaderboardEntry]
-    user_rank: int
-    user_average_score: float
+    user_rank: int = Field(..., alias="你的排名")
+    user_average_score: float = Field(..., alias="平均成绩")

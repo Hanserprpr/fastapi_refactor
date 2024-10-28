@@ -9,7 +9,7 @@ from app.models.game import LeaderboardResponse, LeaderboardEntry
 from app.services.connsql import Connsql
 
 router = APIRouter()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 class GuessRequest(BaseModel):
     guess: int
@@ -72,21 +72,16 @@ async def leaderboard(token: str = Depends(oauth2_scheme), db: Session = Depends
 
     return LeaderboardResponse(
         leaderboard=entries,
-        user_rank=user_rank_value,
-        user_average_score=user_average_score_value
+        你的排名=user_rank_value,
+        平均成绩=user_average_score_value
     )
-
-
-
-
-
     
 # 获取用户当前排名
 @router.get("/rank")
 async def get_user_rank(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     user_id = verify_token(token)
     game_service = GameService(db)
-    user_rank = game_service.get_user_rank(user_id)
+    user_rank = game_service.get_user_rank(user_id, game_name="猜数字")
     if not user_rank:
         return {"message": "你还没有参与任何游戏，无法显示排名。"}
-    return {"rank": user_rank.ranking, "average_score": user_rank.average_score}
+    return {"你的排名": user_rank["ranking"], "平均成绩": user_rank["average_score"]}
