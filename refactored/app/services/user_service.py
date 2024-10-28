@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.user import User
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Header
+from app.services.passwd import passwd
 
 # Retrieve user profile information with full timestamp details
 def get_user_profile(db: Session, user_id: int):
@@ -22,12 +23,12 @@ def update_user_profile(db: Session, user_id: int, name: str = None, sex: str = 
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-    if name:
+    if name is not None:
         user.name = name
-    if sex:
+    if sex is not None:
         user.sex = sex
-    if password:
-        user.password = password  # Note: make sure to hash the password before saving
+    if password is not None:
+        user.password = passwd.encrypt(password)
     db.commit()
     db.refresh(user)
     return user

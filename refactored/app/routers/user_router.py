@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Header
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.services.user_service import get_user_profile, update_user_profile
@@ -31,7 +31,7 @@ async def get_profile(token: str = Depends(oauth2_scheme), db: Session = Depends
 
 
 @router.put("/profile")
-async def update_profile(user_data: UserProfile, token: str, db: Session = Depends(get_db)):
+async def update_profile(user_data: UserProfile, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     user_id = verify_token(token)
     if not user_id:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token")
