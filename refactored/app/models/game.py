@@ -1,6 +1,8 @@
 from sqlalchemy import Column, Integer, String, Enum, DateTime, ForeignKey, Float, func
 from sqlalchemy.orm import relationship
 from app.database import Base
+from pydantic import BaseModel, Field
+from typing import List
 
 # 游戏尝试表模型
 class GameAttempt(Base):
@@ -37,4 +39,16 @@ class GameStats(Base):
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
 
     # 关系
-    user = relationship("User", back_populates="game_stats")
+    user = relationship("User", back_populates="game_stats")   
+    
+class LeaderboardEntry(BaseModel):
+    user_id: int = Field(..., alias="用户id")
+    username: str = Field(..., alias="用户名")
+    average_score: float = Field(..., alias="平均分")
+    games_played: int = Field(..., alias="游戏次数")
+    rank: int = Field(..., alias="排名")
+
+class LeaderboardResponse(BaseModel):
+    leaderboard: List[LeaderboardEntry]
+    user_rank: int
+    user_average_score: float

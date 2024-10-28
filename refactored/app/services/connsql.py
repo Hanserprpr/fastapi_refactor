@@ -121,16 +121,54 @@ class Connsql:
         history = self.db.query(GameAttempt).filter(GameAttempt.user_id == user_id, GameAttempt.game_name == game_name).order_by(GameAttempt.played_at.desc()).limit(10).all()
         return history
 
-    def fetch_leaderboard(self, game_name: str):
+    def fetch_leaderboard(self, game_name: str, limit: int = 10):
         """获取游戏排行榜"""
-        leaderboard = self.db.query(GameStats).filter(GameStats.game_name == game_name).order_by(GameStats.average_score.desc()).limit(10).all()
-        return leaderboard
+        leaderboard = (
+            self.db.query(GameStats.user_id, GameStats.average_score, GameStats.games_played, User.name.label("username"))
+            .join(User, GameStats.user_id == User.id)
+            .filter(GameStats.game_name == game_name)
+            .order_by(GameStats.average_score.desc())
+            .limit(limit)
+            .all()
+        )
+        
+        # 打印查询结果
+        print("Leaderboard query result:", leaderboard)
+
+        # 将查询结果转换为字典格式，使用元组索引访问字段
+        return [
+            {
+                "用户id": entry[0],          # entry[0] 对应 user_id
+                "用户名": entry[3],           # entry[3] 对应 username
+                "平均分": entry[1],           # entry[1] 对应 average_score
+                "游戏次数": entry[2],         # entry[2] 对应 games_played
+                "排名": idx + 1               # 自动排名
+            }
+            for idx, entry in enumerate(leaderboard)
+        ]
+
 
     def get_user_rank(self, user_id: int, game_name: str):
         """获取用户在游戏中的排名"""
-        subquery = self.db.query(GameStats.user_id, GameStats.average_score, func.rank().over(order_by=GameStats.average_score.desc()).label("ranking")).filter(GameStats.game_name == game_name).subquery()
+
+        # 使用子查询获取用户的排名信息
+        subquery = (
+            self.db.query(GameStats.user_id, GameStats.average_score, func.rank().over(order_by=GameStats.average_score.desc()).label("ranking"))
+            .filter(GameStats.game_name == game_name)
+            .subquery()
+        )
         rank_info = self.db.query(subquery).filter(subquery.c.user_id == user_id).first()
-        return rank_info
+        # 如果 rank_info 存在，将其转换为字典
+        if rank_info:
+            return {
+                "ranking": rank_info.ranking,
+                "average_score": rank_info.average_score,
+            }
+        else:
+            return None
+
+
+
 
     def get_user_by_identifier(self, identifier: str) -> User:
         """通过用户名或邮箱获取完整用户对象"""

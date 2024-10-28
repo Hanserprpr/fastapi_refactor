@@ -44,4 +44,13 @@ class GameService:
             self.connsql.save_game_attempt(user_id, "猜数字", score, attempts)
             self.connsql.update_user_stats(user_id, "猜数字", score, attempts)
             redis_client.delete(f"game_state:{user_id}")  # 游戏结束，删除状态
-            return f"恭喜你，猜对了！得分为 {score} 分，尝试次数为 {attempts} 次。"
+            return f"恭喜你，猜对了！你的得分为 {score} 分，尝试次数为 {attempts} 次。"
+        
+    def get_history(self, user_id: int, game_name: str = "猜数字"):
+        return self.connsql.fetch_game_history(user_id, game_name)
+
+    def get_leaderboard(self, game_name: str = "猜数字", limit: int = 10):
+        return self.connsql.fetch_leaderboard(game_name, limit)
+
+    def get_user_rank(self, user_id: int, game_name: str = "猜数字"):
+        return self.connsql.get_user_rank(user_id, game_name)

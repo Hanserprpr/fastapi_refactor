@@ -14,7 +14,7 @@ async def register_user(db: Session, name: str, email: str, sex: str, password: 
     encrypted_password = await passwd.encrypt(password)
     connsql.signup(name, email, sex, encrypted_password, qq)
     user_id = connsql.search_id(QQ=qq)
-    #await redis_conn.set_user_logged_in(qq, user_id)  # 设置用户登录状态
+
     
     return {"id": user_id, "name": name, "email": email, "sex": sex, "QQ": qq}
 
@@ -24,8 +24,7 @@ async def login_user(db: Session, identifier: str, password: str) -> str:
     if not user or not await passwd.decrypt(password, identifier, db):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
     
-    #await redis_conn.set_user_logged_in(user.QQ, user.id)
     connsql.update_last_login(user_id=user.id)
     # 返回 token 或者用户 session 信息
-    access_token = create_access_token(data={"sub": str(user.id)})
+    access_token = create_access_token(data={"user_id": str(user.id)})
     return {"access_token": access_token, "token_type": "bearer"}
