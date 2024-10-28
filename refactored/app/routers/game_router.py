@@ -29,8 +29,3 @@ async def make_guess(guess_request: GuessRequest, token: str = Depends(oauth2_sc
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
-@router.post("/restart_game")
-async def restart_game(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    user_id = verify_token(token)
-    game_service = GameService(db)
-    return await start_game(token=token, db=db)
