@@ -2,14 +2,14 @@ import bcrypt
 from .connsql import Connsql
 import asyncio
 
-class passwd:
+class passwd:  
     async def encrypt(passwd: str) -> str:
         password = passwd.encode('utf-8')
         hashed_password = await asyncio.to_thread(bcrypt.hashpw, password, bcrypt.gensalt())
         return hashed_password.decode('utf-8')  # 返回字符串格式，便于存储
 
 
-    async def decrypt(passwd: str, identifier: str):
+    async def decrypt(passwd: str, identifier: str, db):
         """
         解密函数
 
@@ -21,7 +21,8 @@ class passwd:
         bool: 如果密码匹配则返回 True,否则返回 False
         """
         input_password = passwd.encode('utf-8')
-        hashed_password = Connsql.search_passwd(identifier)
+        connsql_instance = Connsql(db)
+        hashed_password = connsql_instance.search_passwd(identifier)
         if hashed_password is None:
             return False
         

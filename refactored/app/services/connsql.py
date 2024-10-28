@@ -42,7 +42,7 @@ class Connsql:
             user = self.db.query(User).filter(User.id == user_id).first()
         return user.name if user else None
 
-    def get_me(self, QQ: str = None, user_id: str = None) -> str:
+    def get_me(self, QQ: str = None, user_id: str = None) -> dict:
         """查询用户个人信息"""
         user = None
         if QQ:
@@ -51,18 +51,18 @@ class Connsql:
             user = self.db.query(User).filter(User.id == user_id).first()
         
         if user:
-            return (
-                f"用户 ID: {user.id}\n"
-                f"用户名: {user.name}\n"
-                f"邮箱: {user.email}\n"
-                f"性别: {'男' if user.sex == 'M' else '女' if user.sex == 'F' else '其他'}\n"
-                f"QQ: {user.QQ}\n"
-                f"账号状态: {'活跃' if user.status == 1 else '禁用'}\n"
-                f"注册时间: {user.created_at.strftime('%Y-%m-%d %H:%M:%S')}\n"
-                f"最后更新时间: {user.updated_at.strftime('%Y-%m-%d %H:%M:%S')}\n"
-                f"最后登录时间:{user.last_login.strftime('%Y-%m-%d %H:%M:%S') if user.last_login else 'N/A'}"
-            )
-        return "用户不存在"
+            return {
+                "用户ID": user.id,
+                "用户名": user.name,
+                "邮箱": user.email,
+                "性别": "男" if user.sex == "M" else "女" if user.sex == "F" else "其他",
+                "QQ": user.QQ,
+                "账号状态": "活跃" if user.status == 1 else "禁用",
+                "注册时间": user.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+                "最后更新时间": user.updated_at.strftime("%Y-%m-%d %H:%M:%S"),
+                "最后登录时间": user.last_login.strftime("%Y-%m-%d %H:%M:%S") if user.last_login else "N/A"
+            }
+        return {"detail": "用户不存在"}
 
     def update_last_login(self, QQ: str = None, user_id: str = None):
         """更新用户最后登录时间"""

@@ -3,6 +3,7 @@ from app.database import engine, Base  # 初始化数据库连接
 from app.routers import user, auth  # 导入用户和认证路由模块
 from app.config import settings  # 导入配置
 from fastapi.middleware.cors import CORSMiddleware
+from app.routers.user_router import router as user_router
 
 # 创建 FastAPI 实例
 app = FastAPI(
@@ -34,8 +35,5 @@ app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
 @app.get("/")
 def root():
     return {"message": "Welcome to the Guess Number Game API"}
-# Import and include user_router for user profile management
-from app.routers.user_router import router as user_router
 
-# Register the user router
 app.include_router(user_router, prefix="/api/user", tags=["User"])
