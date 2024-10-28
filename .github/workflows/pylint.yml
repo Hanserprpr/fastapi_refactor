@@ -22,4 +22,4 @@ jobs:
 
       - name: Run Pylint
         run: |
-          pylint app/  # 指定代码目录为 app
+          pylint .
