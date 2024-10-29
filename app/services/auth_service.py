@@ -5,11 +5,26 @@ from app.services.jwt_manager import create_access_token
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from .passwd import passwd
+import re
 passwd_service = passwd
 async def register_user(db: Session, name: str, email: str, sex: str, password: str, qq: str) -> Dict:
     connsql = Connsql(db)
     if connsql.search_id(name=name) or connsql.search_id(email=email) or connsql.search_id(QQ=qq):
         raise ValueError("Username, email, or QQ is already taken")
+    
+    def validate_password(password: str) -> bool:
+        has_upper = re.search(r'[A-Z]', password) is not None
+        has_lower = re.search(r'[a-z]', password) is not None
+        has_digit = re.search(r'\d', password) is not None
+        has_special = re.search(r'[\W_]', password) is not None  # 匹配非字母数字字符
+        
+        # 统计符合条件的类型
+        count = sum([has_upper, has_lower, has_digit, has_special])
+        return count >= 2
+
+    if not validate_password(password):
+        raise ValueError("密码必须包含以下两种字符中的至少两种：大写字母、小写字母、数字、特殊字符。")
+
     
     encrypted_password = await passwd.encrypt(password)
     connsql.signup(name, email, sex, encrypted_password, qq)
