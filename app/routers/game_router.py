@@ -17,6 +17,8 @@ class GuessRequest(BaseModel):
 @router.post("/start_game")
 async def start_game(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     user_id = verify_token(token)
+    if not user_id:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token")
     game_service = GameService(db)
     game_service.start_game(user_id)
     return {"message": "欢迎来到猜数字游戏！我已经想好了 1 到 100 之间的一个数字，请开始猜吧！"}
@@ -24,6 +26,8 @@ async def start_game(token: str = Depends(oauth2_scheme), db: Session = Depends(
 @router.post("/guess")
 async def make_guess(guess_request: GuessRequest, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     user_id = verify_token(token)
+    if not user_id:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token")
     game_service = GameService(db)
     try:
         message = game_service.make_guess(user_id, guess_request.guess)
@@ -35,6 +39,8 @@ async def make_guess(guess_request: GuessRequest, token: str = Depends(oauth2_sc
 @router.get("/history")
 async def get_history(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     user_id = verify_token(token)
+    if not user_id:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token")
     game_service = GameService(db)
     history = game_service.get_history(user_id)
     if not history:
@@ -44,6 +50,8 @@ async def get_history(token: str = Depends(oauth2_scheme), db: Session = Depends
 @router.get("/leaderboard", response_model=LeaderboardResponse)
 async def leaderboard(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db), limit: int = 10):
     user_id = verify_token(token)  
+    if not user_id:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token")
     game_service = GameService(db)
 
     # 获取排行榜数据
@@ -80,6 +88,8 @@ async def leaderboard(token: str = Depends(oauth2_scheme), db: Session = Depends
 @router.get("/rank")
 async def get_user_rank(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     user_id = verify_token(token)
+    if not user_id:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token")
     game_service = GameService(db)
     user_rank = game_service.get_user_rank(user_id, game_name="猜数字")
     if not user_rank:

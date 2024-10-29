@@ -8,12 +8,22 @@
 
 以下是运行该项目所需的主要依赖项：
 
-- `fastapi`：用于构建 API 的高性能 Web 框架。
-- `uvicorn`：用于运行 `FastAPI` 应用的 ASGI 服务器。
-- `redis`：用于管理用户会话。
-- `mysql-connector-python`：用于连接 MySQL 数据库。
-- `bcrypt`：用于安全加密用户密码的哈希库。
-- `pydantic`：用于请求数据验证的数据验证库。
+- **annotated-types**：用于支持 Python 3.9+ 的注解类型。
+- **anyio**：用于异步 I/O，提供高层次的异步编程 API。
+- **bcrypt**：用于安全加密用户密码的哈希库。
+- **email_validator**：用于验证电子邮件地址的库。
+- **fastapi**：用于构建 API 的高性能 Web 框架。
+- **h11**：用于 HTTP/1.1 协议的库。
+- **pydantic**：用于请求数据验证的数据验证库。
+- **pydantic-settings**：用于管理 Pydantic 配置。
+- **pydantic-core**：Pydantic 的核心库，处理数据验证和序列化。
+- **PyJWT**：用于创建和验证 JSON Web Tokens。
+- **PyMySQL**：用于连接 MySQL 数据库的纯 Python 实现。
+- **python-dotenv**：用于加载环境变量的库。
+- **python-multipart**：用于处理 multipart 表单数据的库。
+- **redis**：用于管理用户猜数字状态。
+- **SQLAlchemy**：用于数据库 ORM 操作的库。
+- **uvicorn**：用于运行 FastAPI 应用的 ASGI 服务器。
 
 ## 数据库配置
 
@@ -46,21 +56,38 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 - **游戏玩法**：一个数字猜测游戏，用户尝试猜测一个数字，根据猜测次数提供反馈。
 - **游戏统计**：存储用户的游戏表现数据，如猜测次数，并根据表现对玩家进行排名。
 - **RESTful API**：所有操作都通过 REST 端点提供，便于与其他前端客户端或服务集成。
-- **会话管理**：通过 `Redis` 管理用户的登录状态。
+- **会话管理**：通过 `Redis` 管理用户的游戏状态。
 
 ## 项目结构
 
-```
+```python
+
 ├── app
-│   ├── main.py       # 应用程序入口
-│   ├── models.py     # 数据库模型
-│   ├── routes        # 不同模块的 API 路由
-│   ├── utils         # 实用函数，如令牌创建、哈希
-│   └── ...
-├── requirements.txt  # 项目依赖项
-├── mysql.md          # MySQL 配置和架构详细信息
-├── .env              # 环境变量（不应包含在公共仓库中）
-└── README.md         # 项目文档
+│   ├── main.py        # 应用程序入口
+│   ├── config.py      # 配置文件
+│   ├── database.py     # 数据库连接和配置
+│   ├── dependencies.py # 依赖项管理
+│   ├── test.py        # 测试文件
+│   ├── models         # 数据库模型
+│   │   ├── game.py    # 游戏模型
+│   │   ├── user.py    # 用户模型
+│   │   └── __init__.py # 初始化文件
+│   ├── routers        # 不同模块的 API 路由
+│   │   ├── auth.py    # 认证路由
+│   │   ├── game_router.py  # 游戏相关路由
+│   │   └── user_router.py  # 用户相关路由
+│   └── services       # 业务逻辑和服务
+│       ├── auth_service.py # 认证服务
+│       ├── connsql.py      # 数据库连接服务
+│       ├── GameService.py   # 游戏服务
+│       ├── jwt_manager.py   # JWT 管理
+│       ├── passwd.py        # 密码处理
+│       └── user_service.py  # 用户服务
+│
+├── requirements.txt   # 项目依赖项
+├── mysql.md           # MySQL 配置和架构详细信息
+├── .env               # 环境变量
+└── README.md          # 项目文档
 ```
 
 ## 环境变量
@@ -72,18 +99,6 @@ DATABASE_URL=mysql://username:password@localhost:3306/guessnum
 SECRET_KEY=your_secret_key
 REDIS_URL=redis://localhost
 JWT_ALGORITHM=HS256
-```
-
-## 运行测试
-
-可以运行测试来验证应用程序的完整性：
-
-```bash
-# 安装测试依赖项
-pip install pytest pytest-asyncio
-
-# 运行测试
-pytest
 ```
 
 ## API 文档
@@ -112,7 +127,7 @@ pytest
   ```
 
 - **响应**:
-  - **状态码 201**: 注册成功
+  - **状态码 200**: 注册成功
 
     ```json
     {
@@ -130,7 +145,7 @@ pytest
 
     ```json
     {
-      "detail": "Username already exists."
+    "detail": "Username, email, or QQ is already taken"
     }
     ```
 
@@ -138,32 +153,76 @@ pytest
 
 - **URL**: `/api/auth/login`
 - **方法**: `POST`
+- **URL**: `/api/login`
+- **方法**: `POST`
+- **请求头**:
+  - `Content-Type: application/x-www-form-urlencoded`
 - **请求体**:
+
+  ```plaintext
+  username=<string>&password=<string>
+  ```
+
+  | 参数     | 类型   | 描述               |
+  |----------|--------|--------------------|
+  | username | string | 用户名             |
+  | password | string | 用户密码           |
+
+### 响应
+
+#### 成功响应
+
+- **状态码**: `200 OK`
+- **响应体**:
 
   ```json
   {
-    "username": "string",
-    "password": "string"
+    "access_token": "<token>",
+    "token_type": "bearer",
+    "expires_in": 1800
   }
   ```
 
-- **响应**:
-  - **状态码 200**: 登录成功
+  | 参数        | 类型   | 描述                  |
+  |-------------|--------|-----------------------|
+  | access_token| string | 用户的访问令牌        |
+  | token_type  | string | 令牌类型（如 bearer） |
+  | expires_in  | int    | 令牌的有效时间（秒）  |
 
-    ```json
-    {
-      "access_token": "string",
-      "token_type": "bearer"
-    }
-    ```
+#### 失败响应
 
-  - **状态码 401**: 登录失败，例如用户名或密码错误
+- **状态码**: `401 Unauthorized`
+- **响应体**:
 
-    ```json
-    {
-      "detail": "Invalid credentials."
-    }
-    ```
+  ```json
+  {
+    "detail": "Invalid username or password"
+  }
+  ```
+
+  | 参数    | 类型   | 描述                           |
+  |---------|--------|--------------------------------|
+  | detail  | string | 错误信息                       |
+
+### 示例
+
+#### 请求示例
+
+```bash
+curl -X POST "http://127.0.0.1/api/login" \
+-H "Content-Type: application/x-www-form-urlencoded" \
+-d "username=user123&password=pass123"
+```
+
+#### 响应示例
+
+```json
+{
+  "access_token": "abc123",
+  "token_type": "bearer",
+  "expires_in": 1800
+}
+```
 
 ### 获取用户资料
 
@@ -217,6 +276,8 @@ pytest
   }
   ```
 
+- 请求体参数可**只选其一**
+
 - **响应**:
   - **状态码 200**: 更新成功
 
@@ -250,7 +311,15 @@ pytest
 
     ```json
     {
-      "message": "Game started. Guess a number between 1 and 100."
+      "message": "欢迎来到猜数字游戏！我已经想好了 1 到 100 之间的一个数字，请开始猜吧！"
+    }
+    ```
+
+  - **状态码 401**: 未授权
+
+    ```json
+    {
+      "detail": "Invalid or expired token"
     }
     ```
 
@@ -264,7 +333,7 @@ pytest
 
   ```json
   {
-    "guess": "integer"
+    "guess": "num"
   }
   ```
 
@@ -273,7 +342,7 @@ pytest
 
     ```json
     {
-      "message": "Too high! Try again."
+      "message": "太大了！再试一次。"
     }
     ```
 
@@ -281,13 +350,21 @@ pytest
 
     ```json
     {
-      "message": "Correct! You've guessed the number in X attempts."
+      "message": "恭喜你，猜对了！你的得分为 {score} 分，尝试次数为 {attempts} 次。"
+    }
+    ```
+
+  - **状态码 401**: 未授权
+
+    ```json
+    {
+      "detail": "Invalid or expired token"
     }
     ```
 
 ### 游戏统计
 
-- **URL**: `/api/game/stats`
+- **URL**: `/api/game/history`
 - **方法**: `GET`
 - **请求头**:
   - `Authorization`: `Bearer <token>`
@@ -299,6 +376,14 @@ pytest
       "total_games": "integer",
       "average_attempts": "float",
       "best_game": "integer"
+    }
+    ```
+
+  - **状态码 401**: 未授权
+
+    ```json
+    {
+      "detail": "Invalid or expired token"
     }
     ```
 
@@ -326,6 +411,14 @@ pytest
     ]
     ```
 
+  - **状态码 401**: 未授权
+
+    ```json
+    {
+      "detail": "Invalid or expired token"
+    }
+    ```
+
 ### 个人排名
 
 - **URL**: `/api/game/rank`
@@ -345,6 +438,14 @@ pytest
       "平均成绩": 30
       }
     ]
+    ```
+
+  - **状态码 401**: 未授权
+
+    ```json
+    {
+      "detail": "Invalid or expired token"
+    }
     ```
 
 ## 未来改进

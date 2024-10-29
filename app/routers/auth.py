@@ -23,14 +23,6 @@ class LoginRequest(BaseModel):
     username: str  # 可以是用户名或邮箱
     password: str
 
-# 初始化 ConnRedis 实例
-# async def get_redis_conn():
-#     redis_conn = ConnRedis()
-#     await redis_conn.init_redis()
-#     try:
-#         yield redis_conn
-#     finally:
-#         await redis_conn.close()
 
 @router.post("/register", response_model=dict)
 async def register(

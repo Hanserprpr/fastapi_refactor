@@ -24,7 +24,9 @@ class GameService:
         game_state_json = redis_client.get(f"game_state:{user_id}")
         if game_state_json is None:
             raise ValueError("游戏尚未开始，请先调用 start_game。")
-
+        # 验证输入
+        if not isinstance(guess, int):
+            raise ValueError("输入无效，请输入一个数字。")
         # 解析状态
         game_state = json.loads(game_state_json)
         target_number = game_state["target_number"]

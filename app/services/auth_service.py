@@ -27,4 +27,4 @@ async def login_user(db: Session, username: str, password: str) -> str:
     connsql.update_last_login(user_id=user.id)
     # 返回 token 或者用户 session 信息
     access_token = create_access_token(data={"user_id": str(user.id)})
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer", "expires_in" : 1800 }
