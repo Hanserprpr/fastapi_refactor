@@ -153,8 +153,6 @@ JWT_ALGORITHM=HS256
 
 - **URL**: `/api/auth/login`
 - **方法**: `POST`
-- **URL**: `/api/login`
-- **方法**: `POST`
 - **请求头**:
   - `Content-Type: application/x-www-form-urlencoded`
 - **请求体**:
@@ -373,9 +371,9 @@ curl -X POST "http://127.0.0.1/api/login" \
 
     ```json
     {
-      "total_games": "integer",
-      "average_attempts": "float",
-      "best_game": "integer"
+      "date": "time",
+        "score": "int" ,
+        "attempts": "int"
     }
     ```
 
@@ -397,18 +395,19 @@ curl -X POST "http://127.0.0.1/api/login" \
   - **状态码 200**: 获取排行榜成功
 
     ```json
-    [
-      {
-        "username": "string",
-        "average_attempts": "float",
-        "total_games": "integer"
-      },
-      {
-        "username": "string",
-        "average_attempts": "float",
-        "total_games": "integer"
-      }
-    ]
+    {
+    "leaderboard": [
+        {
+            "用户id": "int",
+            "用户名": "string",
+            "平均分": "float",
+            "游戏次数": "int",
+            "排名": "int"
+        }
+    ],
+    "你的排名": "int",
+    "平均成绩": "float"
+    }
     ```
 
   - **状态码 401**: 未授权
@@ -434,8 +433,8 @@ curl -X POST "http://127.0.0.1/api/login" \
         "message": "你还没有参与任何游戏，无法显示排名。"
       },或
       {
-      "你的排名": 1,
-      "平均成绩": 30
+      "你的排名": "int",
+      "平均成绩": "float"
       }
     ]
     ```
